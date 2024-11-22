@@ -139,7 +139,6 @@ type BuildingPermitsJsonRecords []struct {
 	Street_number          string `json:"street_number"`
 	Street_direction       string `json:"street_direction"`
 	Street_name            string `json:"street_name"`
-	Suffix                 string `json:"suffix"`
 	Work_description       string `json:"work_description"`
 	Building_fee_paid      string `json:"building_fee_paid"`
 	Zoning_fee_paid        string `json:"zoning_fee_paid"`
@@ -287,12 +286,9 @@ func main() {
 
 		go GetCommunityAreaUnemployment(db)
 		go GetBuildingPermits(db)
-		go GetTaxiTrips(db)
+		//go GetTaxiTrips(db)
 		go GetCCVIDetails(db)
 		go GetCovidDetails(db)
-
-		// go GetCovidDetails(db)
-		// go GetCCVIDetails(db)
 
 		http.HandleFunc("/", handler)
 
@@ -799,7 +795,6 @@ func GetBuildingPermits(db *sql.DB) {
 						"street_number"      VARCHAR(255), 
 						"street_direction"      VARCHAR(255), 
 						"street_name"      VARCHAR(255), 
-						"suffix"      VARCHAR(255), 
 						"work_description"      TEXT, 
 						"building_fee_paid"      VARCHAR(255), 
 						"zoning_fee_paid"      VARCHAR(255), 
@@ -913,10 +908,6 @@ func GetBuildingPermits(db *sql.DB) {
 		if street_name == "" {
 			continue
 		}
-		suffix := building_data_list[i].Suffix
-		if suffix == "" {
-			continue
-		}
 		work_description := building_data_list[i].Work_description
 		if work_description == "" {
 			continue
@@ -1017,8 +1008,14 @@ func GetBuildingPermits(db *sql.DB) {
 		}
 
 		xcoordinate := building_data_list[i].Xcoordinate
+		if xcoordinate == "" {
+			continue
+		}
 
 		ycoordinate := building_data_list[i].Ycoordinate
+		if ycoordinate == "" {
+			continue
+		}
 
 		sql := `INSERT INTO building_permits ("permit_id", "permit_code", "permit_type","review_type",
 		"application_start_date",
@@ -1027,7 +1024,6 @@ func GetBuildingPermits(db *sql.DB) {
 		"street_number",
 		"street_direction",
 		"street_name",
-		"suffix",
 		"work_description",
 		"building_fee_paid",
 		"zoning_fee_paid",
@@ -1053,7 +1049,7 @@ func GetBuildingPermits(db *sql.DB) {
 		"ward",
 		"xcoordinate",
 		"ycoordinate" )
-		values($1, $2, $3, $4, $5, $6, $7, $8, $9, $10,$11, $12, $13, $14, $15,$16, $17, $18, $19, $20,$21, $22, $23, $24, $25,$26, $27, $28, $29,$30,$31, $32, $33, $34, $35, $36)`
+		values($1, $2, $3, $4, $5, $6, $7, $8, $9, $10,$11, $12, $13, $14, $15,$16, $17, $18, $19, $20,$21, $22, $23, $24, $25,$26, $27, $28, $29,$30,$31, $32, $33, $34, $35)`
 
 		_, err = db.Exec(
 			sql,
@@ -1067,7 +1063,6 @@ func GetBuildingPermits(db *sql.DB) {
 			street_number,
 			street_direction,
 			street_name,
-			suffix,
 			work_description,
 			building_fee_paid,
 			zoning_fee_paid,
