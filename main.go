@@ -377,7 +377,7 @@ func GetTaxiTrips(db *sql.DB) {
 
 	// Get the the Taxi Trips for Taxi medallions list
 
-	var url = "https://data.cityofchicago.org/resource/wrvz-psew.json?$limit=50"
+	var url = "https://data.cityofchicago.org/resource/wrvz-psew.json?$limit=500"
 
 	tr := &http.Transport{
 		MaxIdleConns:          10,
@@ -408,7 +408,7 @@ func GetTaxiTrips(db *sql.DB) {
 
 	// Get the Taxi Trip list for rideshare companies like Uber/Lyft list
 	// Transportation-Network-Providers-Trips:
-	var url_2 = "https://data.cityofchicago.org/resource/m6dm-c72p.json?$limit=50"
+	var url_2 = "https://data.cityofchicago.org/resource/m6dm-c72p.json?$limit=500"
 
 	res_2, err := http.Get(url_2)
 	if err != nil {
@@ -596,7 +596,7 @@ func GetCommunityAreaUnemployment(db *sql.DB) {
 
 	// There are 77 known community areas in the data set
 	// So, set limit to 100.
-	var url = "https://data.cityofchicago.org/resource/iqnk-2tcu.json?$limit=100"
+	var url = "https://data.cityofchicago.org/resource/iqnk-2tcu.json?$limit=500"
 
 	tr := &http.Transport{
 		MaxIdleConns:       10,
@@ -832,7 +832,7 @@ func GetBuildingPermits(db *sql.DB) {
 
 	// While doing unit-testing keep the limit value to 500
 	// later you could change it to 1000, 2000, 10,000, etc.
-	var url = "https://data.cityofchicago.org/resource/building-permits.json?$limit=100"
+	var url = "https://data.cityofchicago.org/resource/building-permits.json?$limit=500"
 
 	tr := &http.Transport{
 		MaxIdleConns:       10,
@@ -1171,7 +1171,7 @@ func GetCovidDetails(db *sql.DB) {
 	fmt.Println("Created Table for Zipcode Covid Data")
 
 	// Set the URL for retrieving CCVI Data
-	var url = "https://data.cityofchicago.org/resource/yhhz-zm2v.json?$limit=100"
+	var url = "https://data.cityofchicago.org/resource/yhhz-zm2v.json?$limit=500"
 
 	tr := &http.Transport{
 		MaxIdleConns:       10,
@@ -1390,7 +1390,7 @@ func GetCCVIDetails(db *sql.DB) {
 	fmt.Println("Created Table for Building Permits")
 
 	// Set the URL for retrieving CCVI Data
-	var url = "https://data.cityofchicago.org/resource/xhc6-88s9.json?$limit=100"
+	var url = "https://data.cityofchicago.org/resource/xhc6-88s9.json?$limit=500"
 
 	tr := &http.Transport{
 		MaxIdleConns:       10,
