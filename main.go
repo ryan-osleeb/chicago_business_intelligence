@@ -1,74 +1,5 @@
 package main
 
-////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
-//
-// 		Chicago Business Intelligence for Strategic Planning Project
-//
-//		Author: Atef Bader, PhD
-//
-//
-//		The provided source code is NOT the complete implementation for this project
-//		The provided source code is for the individual use for students registered in this course
-//      	The provided source code can NOT be redistributed
-//		The provided source code needs your Google Account geocoder.ApiKey for geocoder.GeocodingReverse
-//
-//
-////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
-
-////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
-// The following program will collect data for Taxi Trips, Building permists, and
-// Unemployment data from the City of Chicago data portal
-// we are using SODA REST API to collect the JSON records
-// You coud use the REST API below and post them as URLs in your Browser
-// for manual inspection/visualization of data
-// the browser will take roughly 5 minutes to get the reply with the JSON data
-// and produce the JSON pretty-print
-////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
-
-////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
-
-// The following is a sample record from the Taxi Trips dataset retrieved from the City of Chicago Data Portal
-
-////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
-
-// trip_id	"c354c843908537bbf90997917b714f1c63723785"
-// trip_start_timestamp	"2021-11-13T22:45:00.000"
-// trip_end_timestamp	"2021-11-13T23:00:00.000"
-// trip_seconds	"703"
-// trip_miles	"6.83"
-// pickup_census_tract	"17031840300"
-// dropoff_census_tract	"17031081800"
-// pickup_community_area	"59"
-// dropoff_community_area	"8"
-// fare	"27.5"
-// tip	"0"
-// additional_charges	"1.02"
-// trip_total	"28.52"
-// shared_trip_authorized	false
-// trips_pooled	"1"
-// pickup_centroid_latitude	"41.8335178865"
-// pickup_centroid_longitude	"-87.6813558293"
-// pickup_centroid_location
-// type	"Point"
-// coordinates
-// 		0	-87.6813558293
-// 		1	41.8335178865
-// dropoff_centroid_latitude	"41.8932163595"
-// dropoff_centroid_longitude	"-87.6378442095"
-// dropoff_centroid_location
-// type	"Point"
-// coordinates
-// 		0	-87.6378442095
-// 		1	41.8932163595
-////////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////////
-
 import (
 	"database/sql"
 	"encoding/json"
@@ -255,17 +186,6 @@ func init() {
 
 func main() {
 
-	// Spin in a loop and pull data from the city of chicago data portal
-	// Once every hour, day, week, etc.
-	// Though, please note that Not all datasets need to be pulled on daily basis
-	// fine-tune the following code-snippet as you see necessary
-
-	// For now while you are doing protyping and unit-testing,
-	// it is a good idea to use Cloud Run and start an HTTP server, and manually you kick-start
-	// the microservices (goroutines) for data collection from the different sources
-	// Once you are done with protyping and unit-testing,
-	// you could port your code Cloud Run to  Compute Engine, App Engine, Kubernetes Engine, Google Functions, etc.
-
 	for {
 
 		// While using Cloud Run for instrumenting/prototyping/debugging use the server
@@ -330,10 +250,6 @@ func handler(w http.ResponseWriter, r *http.Request) {
 
 func GetTaxiTrips(db *sql.DB) {
 
-	// This function is NOT complete
-	// It provides code-snippets for the data source: https://data.cityofchicago.org/Transportation/Taxi-Trips/wrvz-psew
-	// You need to complete the implmentation and add the data source: https://data.cityofchicago.org/Transportation/Transportation-Network-Providers-Trips/m6dm-c72p
-
 	// Data Collection needed from two data sources:
 	// 1. https://data.cityofchicago.org/Transportation/Taxi-Trips/wrvz-psew
 	// 2. https://data.cityofchicago.org/Transportation/Transportation-Network-Providers-Trips/m6dm-c72p
@@ -372,12 +288,9 @@ func GetTaxiTrips(db *sql.DB) {
 
 	fmt.Println("Created Table for Taxi Trips")
 
-	// While doing unit-testing keep the limit value to 500
-	// later you could change it to 1000, 2000, 10,000, etc.
-
 	// Get the the Taxi Trips for Taxi medallions list
 
-	var url = "https://data.cityofchicago.org/resource/wrvz-psew.json?$limit=500"
+	var url = "https://data.cityofchicago.org/resource/wrvz-psew.json?$limit=50"
 
 	tr := &http.Transport{
 		MaxIdleConns:          10,
@@ -408,7 +321,7 @@ func GetTaxiTrips(db *sql.DB) {
 
 	// Get the Taxi Trip list for rideshare companies like Uber/Lyft list
 	// Transportation-Network-Providers-Trips:
-	var url_2 = "https://data.cityofchicago.org/resource/m6dm-c72p.json?$limit=500"
+	var url_2 = "https://data.cityofchicago.org/resource/m6dm-c72p.json?$limit=50"
 
 	res_2, err := http.Get(url_2)
 	if err != nil {
@@ -431,11 +344,6 @@ func GetTaxiTrips(db *sql.DB) {
 	// Process the list
 
 	for i := 0; i < len(taxi_trips_list); i++ {
-
-		// We will execute defensive coding to check for messy/dirty/missing data values
-		// There are different methods to deal with messy/dirty/missing data.
-		// We will use the simplest method: drop records that have messy/dirty/missing data
-		// Any record that has messy/dirty/missing data we don't enter it in the data lake/table
 
 		trip_id := taxi_trips_list[i].Trip_id
 		if trip_id == "" {
@@ -544,9 +452,6 @@ func GetTaxiTrips(db *sql.DB) {
 func GetCommunityAreaUnemployment(db *sql.DB) {
 	fmt.Println("GetCommunityAreaUnemployment: Collecting Unemployment Rates Data")
 
-	// This function is NOT complete
-	// It provides code-snippets for the data source: https://data.cityofchicago.org/Health-Human-Services/Public-Health-Statistics-Selected-public-health-in/iqnk-2tcu/data
-
 	drop_table := `drop table if exists community_area_unemployment`
 	_, err := db.Exec(drop_table)
 	if err != nil {
@@ -596,7 +501,7 @@ func GetCommunityAreaUnemployment(db *sql.DB) {
 
 	// There are 77 known community areas in the data set
 	// So, set limit to 100.
-	var url = "https://data.cityofchicago.org/resource/iqnk-2tcu.json?$limit=500"
+	var url = "https://data.cityofchicago.org/resource/iqnk-2tcu.json?$limit=50"
 
 	tr := &http.Transport{
 		MaxIdleConns:       10,
@@ -622,11 +527,6 @@ func GetCommunityAreaUnemployment(db *sql.DB) {
 	io.WriteString(os.Stdout, s)
 
 	for i := 0; i < len(unemployment_data_list); i++ {
-
-		// We will execute defensive coding to check for messy/dirty/missing data values
-		// There are different methods to deal with messy/dirty/missing data.
-		// We will use the simplest method: drop records that have messy/dirty/missing data
-		// Any record that has messy/dirty/missing data we don't enter it in the data lake/table
 
 		community_area := unemployment_data_list[i].Community_area
 		if community_area == "" {
@@ -771,12 +671,6 @@ func GetCommunityAreaUnemployment(db *sql.DB) {
 func GetBuildingPermits(db *sql.DB) {
 	fmt.Println("GetBuildingPermits: Collecting Building Permits Data")
 
-	// This function is NOT complete
-	// It provides code-snippets for the data source: https://data.cityofchicago.org/Buildings/Building-Permits/ydr8-5enu/data
-
-	// Data Collection needed from data source:
-	// https://data.cityofchicago.org/Buildings/Building-Permits/ydr8-5enu/data
-
 	drop_table := `drop table if exists building_permits`
 	_, err := db.Exec(drop_table)
 	if err != nil {
@@ -832,7 +726,7 @@ func GetBuildingPermits(db *sql.DB) {
 
 	// While doing unit-testing keep the limit value to 500
 	// later you could change it to 1000, 2000, 10,000, etc.
-	var url = "https://data.cityofchicago.org/resource/building-permits.json?$limit=500"
+	var url = "https://data.cityofchicago.org/resource/building-permits.json?$limit=50"
 
 	tr := &http.Transport{
 		MaxIdleConns:       10,
@@ -1171,7 +1065,7 @@ func GetCovidDetails(db *sql.DB) {
 	fmt.Println("Created Table for Zipcode Covid Data")
 
 	// Set the URL for retrieving CCVI Data
-	var url = "https://data.cityofchicago.org/resource/yhhz-zm2v.json?$limit=500"
+	var url = "https://data.cityofchicago.org/resource/yhhz-zm2v.json?$limit=50"
 
 	tr := &http.Transport{
 		MaxIdleConns:       10,
@@ -1390,7 +1284,7 @@ func GetCCVIDetails(db *sql.DB) {
 	fmt.Println("Created Table for Building Permits")
 
 	// Set the URL for retrieving CCVI Data
-	var url = "https://data.cityofchicago.org/resource/xhc6-88s9.json?$limit=500"
+	var url = "https://data.cityofchicago.org/resource/xhc6-88s9.json?$limit=50"
 
 	tr := &http.Transport{
 		MaxIdleConns:       10,
