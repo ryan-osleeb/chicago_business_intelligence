@@ -7,7 +7,6 @@ import (
 	"io"
 	"io/ioutil"
 	"log"
-	"net"
 	"net/http"
 	"os"
 	"strconv"
@@ -290,34 +289,34 @@ func GetTaxiTrips(db *sql.DB) {
 
 	// Get the the Taxi Trips for Taxi medallions list
 
-	var url = "https://data.cityofchicago.org/resource/wrvz-psew.json?$limit=50"
+	// var url = "https://data.cityofchicago.org/resource/wrvz-psew.json?$limit=50"
 
-	tr := &http.Transport{
-		MaxIdleConns:          10,
-		IdleConnTimeout:       1000 * time.Second,
-		TLSHandshakeTimeout:   1000 * time.Second,
-		ExpectContinueTimeout: 1000 * time.Second,
-		DisableCompression:    true,
-		Dial: (&net.Dialer{
-			Timeout:   1000 * time.Second,
-			KeepAlive: 1000 * time.Second,
-		}).Dial,
-		ResponseHeaderTimeout: 1000 * time.Second,
-	}
+	// tr := &http.Transport{
+	// 	MaxIdleConns:          10,
+	// 	IdleConnTimeout:       1000 * time.Second,
+	// 	TLSHandshakeTimeout:   1000 * time.Second,
+	// 	ExpectContinueTimeout: 1000 * time.Second,
+	// 	DisableCompression:    true,
+	// 	Dial: (&net.Dialer{
+	// 		Timeout:   1000 * time.Second,
+	// 		KeepAlive: 1000 * time.Second,
+	// 	}).Dial,
+	// 	ResponseHeaderTimeout: 1000 * time.Second,
+	// }
 
-	client := &http.Client{Transport: tr}
+	// client := &http.Client{Transport: tr}
 
-	res, err := client.Get(url)
+	// res, err := client.Get(url)
 
-	if err != nil {
-		panic(err)
-	}
+	// if err != nil {
+	// 	panic(err)
+	// }
 
-	fmt.Println("Received data from SODA REST API for Taxi Trips")
+	// fmt.Println("Received data from SODA REST API for Taxi Trips")
 
-	body_1, _ := ioutil.ReadAll(res.Body)
-	var taxi_trips_list_1 TaxiTripsJsonRecords
-	json.Unmarshal(body_1, &taxi_trips_list_1)
+	// body_1, _ := ioutil.ReadAll(res.Body)
+	// var taxi_trips_list_1 TaxiTripsJsonRecords
+	// json.Unmarshal(body_1, &taxi_trips_list_1)
 
 	// Get the Taxi Trip list for rideshare companies like Uber/Lyft list
 	// Transportation-Network-Providers-Trips:
@@ -339,7 +338,9 @@ func GetTaxiTrips(db *sql.DB) {
 
 	// Add the Taxi medallions list & rideshare companies like Uber/Lyft list
 
-	taxi_trips_list := append(taxi_trips_list_1, taxi_trips_list_2...)
+	// taxi_trips_list := append(taxi_trips_list_1, taxi_trips_list_2...)
+
+	taxi_trips_list := taxi_trips_list_2
 
 	// Process the list
 
