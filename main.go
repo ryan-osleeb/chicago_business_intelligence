@@ -7,6 +7,7 @@ import (
 	"io"
 	"io/ioutil"
 	"log"
+	"net"
 	"net/http"
 	"os"
 	"strconv"
@@ -291,20 +292,20 @@ func GetTaxiTrips(db *sql.DB) {
 
 	// var url = "https://data.cityofchicago.org/resource/wrvz-psew.json?$limit=50"
 
-	// tr := &http.Transport{
-	// 	MaxIdleConns:          10,
-	// 	IdleConnTimeout:       1000 * time.Second,
-	// 	TLSHandshakeTimeout:   1000 * time.Second,
-	// 	ExpectContinueTimeout: 1000 * time.Second,
-	// 	DisableCompression:    true,
-	// 	Dial: (&net.Dialer{
-	// 		Timeout:   1000 * time.Second,
-	// 		KeepAlive: 1000 * time.Second,
-	// 	}).Dial,
-	// 	ResponseHeaderTimeout: 1000 * time.Second,
-	// }
+	tr := &http.Transport{
+		MaxIdleConns:          10,
+		IdleConnTimeout:       1000 * time.Second,
+		TLSHandshakeTimeout:   1000 * time.Second,
+		ExpectContinueTimeout: 1000 * time.Second,
+		DisableCompression:    true,
+		Dial: (&net.Dialer{
+			Timeout:   1000 * time.Second,
+			KeepAlive: 1000 * time.Second,
+		}).Dial,
+		ResponseHeaderTimeout: 1000 * time.Second,
+	}
 
-	// client := &http.Client{Transport: tr}
+	client := &http.Client{Transport: tr}
 
 	// res, err := client.Get(url)
 
@@ -320,9 +321,9 @@ func GetTaxiTrips(db *sql.DB) {
 
 	// Get the Taxi Trip list for rideshare companies like Uber/Lyft list
 	// Transportation-Network-Providers-Trips:
-	var url_2 = "https://data.cityofchicago.org/resource/m6dm-c72p.json?$limit=10000"
+	var url_2 = "https://data.cityofchicago.org/resource/m6dm-c72p.json?$limit=50000"
 
-	res_2, err := http.Get(url_2)
+	res_2, err := client.Get(url_2)
 	if err != nil {
 		panic(err)
 	}
