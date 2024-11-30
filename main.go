@@ -320,7 +320,7 @@ func GetTaxiTrips(db *sql.DB) {
 
 	// Get the Taxi Trip list for rideshare companies like Uber/Lyft list
 	// Transportation-Network-Providers-Trips:
-	var url_2 = "https://data.cityofchicago.org/resource/m6dm-c72p.json?$limit=50000"
+	var url_2 = "https://data.cityofchicago.org/resource/m6dm-c72p.json?$limit=10000"
 
 	res_2, err := http.Get(url_2)
 	if err != nil {
