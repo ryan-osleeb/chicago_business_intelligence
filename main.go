@@ -293,16 +293,16 @@ func GetTaxiTrips(db *sql.DB) {
 	// var url = "https://data.cityofchicago.org/resource/wrvz-psew.json?$limit=50"
 
 	tr := &http.Transport{
-		MaxIdleConns:          10,
-		IdleConnTimeout:       1000 * time.Second,
-		TLSHandshakeTimeout:   1000 * time.Second,
-		ExpectContinueTimeout: 1000 * time.Second,
+		MaxIdleConns:          100,
+		IdleConnTimeout:       10000 * time.Second,
+		TLSHandshakeTimeout:   10000 * time.Second,
+		ExpectContinueTimeout: 10000 * time.Second,
 		DisableCompression:    true,
 		Dial: (&net.Dialer{
-			Timeout:   1000 * time.Second,
-			KeepAlive: 1000 * time.Second,
+			Timeout:   10000 * time.Second,
+			KeepAlive: 10000 * time.Second,
 		}).Dial,
-		ResponseHeaderTimeout: 1000 * time.Second,
+		ResponseHeaderTimeout: 10000 * time.Second,
 	}
 
 	client := &http.Client{Transport: tr}
